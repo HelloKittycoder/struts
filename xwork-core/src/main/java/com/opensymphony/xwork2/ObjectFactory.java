@@ -45,6 +45,7 @@ import java.util.Map;
  * This default implementation uses the {@link #buildBean(Class,java.util.Map) buildBean} 
  * method to create all classes (interceptors, actions, results, etc).
  * <p/>
+ * 该类主要用来创建框架的核心对象（interceptors, actions, results等）
  *
  * @author Jason Carreira
  */
@@ -52,7 +53,9 @@ public class ObjectFactory implements Serializable {
 
     private static final Logger LOG = LoggerFactory.getLogger(ObjectFactory.class);
 
+    // 内部缓存ClassLoader
     private transient ClassLoader ccl;
+    // 内部缓存Container，用于实施依赖注入
     private Container container;
 
     private ActionFactory actionFactory;
@@ -62,11 +65,13 @@ public class ObjectFactory implements Serializable {
     private ConverterFactory converterFactory;
     private UnknownHandlerFactory unknownHandlerFactory;
 
+    // 对ClassLoader实施依赖注入
     @Inject(value="objectFactory.classloader", required=false)
     public void setClassLoader(ClassLoader cl) {
         this.ccl = cl;
     }
-    
+
+    // 对Container实施依赖注入
     @Inject
     public void setContainer(Container container) {
         this.container = container;
@@ -122,6 +127,7 @@ public class ObjectFactory implements Serializable {
     /**
      * Utility method to obtain the class matched to className. Caches look ups so that subsequent
      * lookups will be faster.
+     * 根据className获取Class对象（这里缓存了ClassLoader，查找能提高效率）
      *
      * @param className The fully qualified name of the class to return
      * @return The class itself
@@ -136,6 +142,7 @@ public class ObjectFactory implements Serializable {
     }
 
     /**
+     * 构建XWork中Action实例的快捷方法
      * Build an instance of the action class to handle a particular request (eg. web request)
      * @param actionName the name the action configuration is set up with in the configuration
      * @param namespace the namespace the action is configured in
@@ -150,6 +157,7 @@ public class ObjectFactory implements Serializable {
 
     /**
      * Build a generic Java object of the given type.
+     * 根据给定的clazz和外部的上下文环境构建一个对象
      *
      * @param clazz the type of Object to build
      * @param extraContext a Map of extra context which uses the same keys as the {@link com.opensymphony.xwork2.ActionContext}
@@ -159,6 +167,7 @@ public class ObjectFactory implements Serializable {
     }
 
     /**
+     * 针对给定的object实施依赖注入
      * @param obj
      */
     protected Object injectInternalBeans(Object obj) {
@@ -170,6 +179,7 @@ public class ObjectFactory implements Serializable {
 
     /**
      * Build a generic Java object of the given type.
+     * 根据给定的className和外部上下文环境构建对象并实施依赖注入
      *
      * @param className the type of Object to build
      * @param extraContext a Map of extra context which uses the same keys as the {@link com.opensymphony.xwork2.ActionContext}
@@ -180,13 +190,16 @@ public class ObjectFactory implements Serializable {
     
     /**
      * Build a generic Java object of the given type.
+     * 构建对象的实际操作方法
      *
      * @param className the type of Object to build
      * @param extraContext a Map of extra context which uses the same keys as the {@link com.opensymphony.xwork2.ActionContext}
      */
     public Object buildBean(String className, Map<String, Object> extraContext, boolean injectInternal) throws Exception {
+        // 首先创建对象
         Class clazz = getClassInstance(className);
         Object obj = buildBean(clazz, extraContext);
+        // 针对对象实施依赖注入
         if (injectInternal) {
             injectInternalBeans(obj);
         }
@@ -194,6 +207,7 @@ public class ObjectFactory implements Serializable {
     }
 
     /**
+     * 构建XWork框架中Interceptor对象的快捷方法
      * Builds an Interceptor from the InterceptorConfig and the Map of
      * parameters from the interceptor reference. Implementations of this method
      * should ensure that the Interceptor is parameterized with both the
@@ -210,6 +224,7 @@ public class ObjectFactory implements Serializable {
     }
 
     /**
+     * 构建Xwork框架中Result对象的快捷方法
      * Build a Result using the type in the ResultConfig and set the parameters in the ResultConfig.
      *
      * @param resultConfig the ResultConfig found for the action with the result code returned
@@ -220,6 +235,7 @@ public class ObjectFactory implements Serializable {
     }
 
     /**
+     * 构建Xwork框架中Validator对象的快捷方法
      * Build a Validator of the given type and set the parameters on it
      *
      * @param className the type of Validator to build

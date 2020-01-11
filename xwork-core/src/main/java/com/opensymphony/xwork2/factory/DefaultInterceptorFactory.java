@@ -39,6 +39,7 @@ public class DefaultInterceptorFactory implements InterceptorFactory {
 
         try {
             // interceptor instances are long-lived and used across user sessions, so don't try to pass in any extra context
+            // Interceptor实例构成的栈结构声明周期较长，并且跨越Session执行，在这里不应传入额外的Context信息
             Interceptor interceptor = (Interceptor) objectFactory.buildBean(interceptorClassName, null);
             reflectionProvider.setProperties(params, interceptor);
             interceptor.init();
