@@ -56,20 +56,28 @@ public class DefaultUnknownHandlerManager implements UnknownHandlerManager {
         Configuration configuration = container.getInstance(Configuration.class);
         ObjectFactory factory = container.getInstance(ObjectFactory.class);
 
+        // 如果configuration对象不为空，则尝试获取UnknownHandler的实例
         if (configuration != null && container != null) {
             List<UnknownHandlerConfig> unkownHandlerStack = configuration.getUnknownHandlerStack();
             unknownHandlers = new ArrayList<UnknownHandler>();
 
+            // 先尝试从configuration中获取
             if (unkownHandlerStack != null && !unkownHandlerStack.isEmpty()) {
                 //get UnknownHandlers in the specified order
+                // 根据一定顺序获取UnknownHandler的实例
                 for (UnknownHandlerConfig unknownHandlerConfig : unkownHandlerStack) {
+                    // 调用container对象的getInstance方法获取UnknownHandler
+                    // 这里最终调用的就是container.getInstance(UnknownHandler.class, unknownHandlerName)
                     UnknownHandler uh = factory.buildUnknownHandler(unknownHandlerConfig.getName(), new HashMap<String, Object>());
                     unknownHandlers.add(uh);
                 }
             } else {
+                // 然后尝试从container中获取
                 //add all available UnknownHandlers
+                // 调用container对象的getInstanceNames方法获取所有受到容器管理的UnknownHandler实例名称
                 Set<String> unknowHandlerNames = container.getInstanceNames(UnknownHandler.class);
                 for (String unknowHandlerName : unknowHandlerNames) {
+                    // 根据名称调用container对象的getInstance方法获取实例
                     UnknownHandler uh = container.getInstance(UnknownHandler.class, unknowHandlerName);
                     unknownHandlers.add(uh);
                 }

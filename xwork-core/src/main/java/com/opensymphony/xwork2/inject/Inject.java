@@ -35,12 +35,14 @@ public @interface Inject {
 
   /**
    * Dependency name. Defaults to {@link Container#DEFAULT_NAME}.
+   * 进行依赖注入的名称。如果不声明，这个名称会被设置为'defauult'
    */
   String value() default DEFAULT_NAME;
 
   /**
    * Whether or not injection is required. Applicable only to methods and
    * fields (not constructors or parameters).
+   * 是否必须进行依赖注入，仅仅对于方法和属性有效（对构造函数或方法参数无效）
    */
   boolean required() default true;
 }

@@ -20,6 +20,7 @@ import java.io.Serializable;
 import java.util.Set;
 
 /**
+ * XWork容器
  * Injects dependencies into constructors, methods and fields annotated with
  * {@link Inject}. Immutable.
  *
@@ -69,33 +70,41 @@ public interface Container extends Serializable {
 
   /**
    * Default dependency name.
+   * 定义默认的对象获取标识
    */
   String DEFAULT_NAME = "default";
 
   /**
    * Injects dependencies into the fields and methods of an existing object.
+   * 进行对象依赖注入的基本操作系欸口，作为参数的object将被XWork容器进行处理。
+   * object内部声明有@Inject的字段和方法，都将被注入受到容器托管的对象，
+   * 从而建立起依赖关系
    */
   void inject(Object o);
 
   /**
    * Creates and injects a new instance of type {@code implementation}.
+   * 创建一个类的实例并进行对象依赖注入
    */
   <T> T inject(Class<T> implementation);
 
   /**
    * Gets an instance of the given dependency which was declared in
    * {@link com.opensymphony.xwork2.inject.ContainerBuilder}.
+   * 根据type和name作为唯一标识，获取容器中的Java类的实例
    */
   <T> T getInstance(Class<T> type, String name);
 
   /**
    * Convenience method.&nbsp;Equivalent to {@code getInstance(type,
    * DEFAULT_NAME)}.
+   * 根据type和默认的name（default）作为唯一标识，获取容器中的Java类的实例
    */
   <T> T getInstance(Class<T> type);
   
   /**
    * Gets a set of all registered names for the given type
+   * 根据type获取与这个type所对应的容器中所有注册过的name
    * @param type The instance type
    * @return A set of registered names or empty set if no instances are registered for that type
    */
@@ -103,11 +112,13 @@ public interface Container extends Serializable {
 
   /**
    * Sets the scope strategy for the current thread.
+   * 设置当前线程的作用范围策略
    */
   void setScopeStrategy(Scope.Strategy scopeStrategy);
 
   /**
    * Removes the scope strategy for the current thread.
+   * 删除当前线程的作用范围的策略
    */
   void removeScopeStrategy();
 }

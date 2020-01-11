@@ -27,6 +27,7 @@ interface InternalFactory<T> extends Serializable {
 
   /**
    * Creates an object to be injected.
+   * 指定如何创建一个对象
    *
    * @param context of this injection
    * @return instance to be injected
