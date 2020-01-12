@@ -159,6 +159,8 @@ public class XWorkConverter extends DefaultTypeConverter {
 
     @Inject
     public void setDefaultTypeConverter(XWorkBasicConverter conv) {
+        // 注意这里被注入的时XWorkBasicConverter类
+        // 这样一来整个XWorkConverter看起来就像是一个装饰类
         this.defaultTypeConverter = conv;
     }
 
@@ -175,7 +177,9 @@ public class XWorkConverter extends DefaultTypeConverter {
     @Inject
     public void setConversionPropertiesProcessor(ConversionPropertiesProcessor propertiesProcessor) {
         // note: this file is deprecated
+        // 这个文件已经过时
         propertiesProcessor.process("xwork-default-conversion.properties");
+        // 读取classpath中的xwork-conversion.properties文件中的映射关系
         propertiesProcessor.process("xwork-conversion.properties");
     }
 
@@ -265,11 +269,13 @@ public class XWorkConverter extends DefaultTypeConverter {
         // allow this method to be called without any context
         // i.e. it can be called with as little as "Object value" and "Class toClass"
         if (target != null) {
+            // 获取目标clazz
             Class clazz = target.getClass();
 
             Object[] classProp = null;
 
             // this is to handle weird issues with setValue with a different type
+            // 如果对象是CompoundRoot，需要做一些特殊处理
             if ((target instanceof CompoundRoot) && (context != null)) {
                 classProp = getClassProperty(context);
             }
@@ -279,6 +285,7 @@ public class XWorkConverter extends DefaultTypeConverter {
                 property = (String) classProp[1];
             }
 
+            // 根据目标clazz和property，查找对应的类型转化方式
             tc = (TypeConverter) getConverter(clazz, property);
 
             if (LOG.isDebugEnabled())
@@ -287,6 +294,7 @@ public class XWorkConverter extends DefaultTypeConverter {
 
         if (tc == null && context != null) {
             // ok, let's see if we can look it up by path as requested in XW-297
+            // 如果context存在，可以根据path进行目标clazz和property的查找
             Object lastPropertyPath = context.get(ReflectionContextState.CURRENT_PROPERTY_PATH);
             Class clazz = (Class) context.get(XWorkConverter.LAST_BEAN_CLASS_ACCESSED);
             if (lastPropertyPath != null && clazz != null) {
@@ -298,6 +306,7 @@ public class XWorkConverter extends DefaultTypeConverter {
         if (tc == null) {
             if (toClass.equals(String.class) && (value != null) && !(value.getClass().equals(String.class) || value.getClass().equals(String[].class))) {
                 // when converting to a string, use the source target's class's converter
+                // 如果待转化的类型是String，直接使用value本身的toString方法
                 tc = lookup(value.getClass());
             } else {
                 // when converting from a string, use the toClass's converter
@@ -311,6 +320,7 @@ public class XWorkConverter extends DefaultTypeConverter {
 
         if (tc != null) {
             try {
+                // 如果此时找到了typeConverter，则使用该typeConverter完成逻辑
                 return tc.convertValue(context, target, member, property, value, toClass);
             } catch (Exception e) {
                 if (LOG.isDebugEnabled())
@@ -325,6 +335,8 @@ public class XWorkConverter extends DefaultTypeConverter {
             try {
                 if (LOG.isDebugEnabled())
                     LOG.debug("falling back to default type converter [" + defaultTypeConverter + "]");
+                // 如果没有找到对应的typeConverter
+                // 使用XWorkBasicConverter完成逻辑
                 return defaultTypeConverter.convertValue(context, target, member, property, value, toClass);
             } catch (Exception e) {
                 if (LOG.isDebugEnabled())
@@ -337,6 +349,8 @@ public class XWorkConverter extends DefaultTypeConverter {
             try {
                 if (LOG.isDebugEnabled())
                     LOG.debug("falling back to Ognl's default type conversion");
+                // 如果XWorkBasicConverter没有被正确注入
+                // 使用DefaultTypeConverter
                 return super.convertValue(value, toClass);
             } catch (Exception e) {
                 if (LOG.isDebugEnabled())
@@ -407,6 +421,7 @@ public class XWorkConverter extends DefaultTypeConverter {
         return result;
     }
 
+    // 获取某个类对应属性的converter
     protected Object getConverter(Class clazz, String property) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Retrieving convert for class [#0] and property [#1]", clazz, property);

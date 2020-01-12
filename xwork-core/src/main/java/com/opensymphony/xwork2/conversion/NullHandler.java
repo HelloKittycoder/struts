@@ -38,17 +38,21 @@ import java.util.Map;
 * null and continue.
 * @author Luke Blanshard (blanshlu@netscape.net)
 * @author Drew Davidson (drew@ognl.org)
+ *
+ * 指定OGNL在计算时，如果遇到级联对象（Nested Object）时的处理方式
 */
 public interface NullHandler
 {
     /**
         Method called on target returned null.
+        当所调用的方法不存在时的处理策略
      */
     public Object nullMethodResult(Map<String, Object> context, Object target, String methodName, Object[] args);
     
     /**
         Property in target evaluated to null.  Property can be a constant
         String property name or a DynamicSubscript.
+        当所调用属性不存在时的处理策略
      */
     public Object nullPropertyValue(Map<String, Object> context, Object target, Object property);
 }

@@ -264,17 +264,21 @@ public class CompoundRootAccessor implements PropertyAccessor, MethodAccessor, C
     }
 
     public Class classForName(String className, Map context) throws ClassNotFoundException {
+        // 获取OGNL的Root对象
         Object root = Ognl.getRoot(context);
 
         try {
+            // 如果Root对象是CompoundRoot类型，则需要处理特殊名称的className
             if (root instanceof CompoundRoot) {
                 if (className.startsWith("vs")) {
                     CompoundRoot compoundRoot = (CompoundRoot) root;
 
+                    // 支持直接使用vs作为className
                     if ("vs".equals(className)) {
                         return compoundRoot.peek().getClass();
                     }
 
+                    // 支持使用vs2、vs3等形式作为className
                     int index = Integer.parseInt(className.substring(2));
 
                     return compoundRoot.get(index - 1).getClass();

@@ -31,6 +31,8 @@ import java.util.regex.Pattern;
 /**
  * Allows access decisions to be made on the basis of whether a member is static or not.
  * Also blocks or allows access to properties.
+ * 对OGNL默认的对象属性访问策略进行扩展（可以根据指定属性的名称的正则表达式来规定
+ * 某些属性可以被访问，某些属性不能被访问）
  */
 public class SecurityMemberAccess extends DefaultMemberAccess {
 

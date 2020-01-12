@@ -36,6 +36,7 @@ public class OgnlTypeConverterWrapper implements ognl.TypeConverter {
     
     public Object convertValue(Map context, Object target, Member member,
             String propertyName, Object value, Class toType) {
+        // 调用XWork内部实现的TypeConverter，支持自定义的类型转化方式
         return typeConverter.convertValue(context, target, member, propertyName, value, toType);
     }
     

@@ -97,6 +97,7 @@ public class InstantiatingNullHandler implements NullHandler {
             LOG.debug("Entering nullMethodResult ");
         }
 
+        // 不做任何处理
         return null;
     }
 
@@ -105,6 +106,7 @@ public class InstantiatingNullHandler implements NullHandler {
             LOG.debug("Entering nullPropertyValue [target="+target+", property="+property+"]");
         }
 
+        // 可以在运行期指定此次计算的Null值处理策略，在context中设置
         boolean c = ReflectionContextState.isCreatingNullObjects(context);
 
         if (!c) {
@@ -117,6 +119,7 @@ public class InstantiatingNullHandler implements NullHandler {
 
         try {
             String propName = property.toString();
+            // 获取实际的对象
             Object realTarget = reflectionProvider.getRealTarget(propName, context, target);
             Class clazz = null;
 
@@ -126,6 +129,7 @@ public class InstantiatingNullHandler implements NullHandler {
                     return null;
                 }
 
+                // 根据实际获取的对象，获取对应的class类型
                 clazz = pd.getPropertyType();
             }
 
@@ -134,6 +138,7 @@ public class InstantiatingNullHandler implements NullHandler {
                 return null;
             }
 
+            // 调用相应的方法构造null值对象
             Object param = createObject(clazz, realTarget, propName, context);
 
             reflectionProvider.setValue(propName, context, realTarget, param);
@@ -149,6 +154,7 @@ public class InstantiatingNullHandler implements NullHandler {
     }
 
     private Object createObject(Class clazz, Object target, String property, Map<String, Object> context) throws Exception {
+        // 根据特殊的clazz类型，处理返回的结果对象
         if (Set.class.isAssignableFrom(clazz)) {
             return new HashSet();
         } else if (Collection.class.isAssignableFrom(clazz)) {
@@ -160,6 +166,7 @@ public class InstantiatingNullHandler implements NullHandler {
             return new EnumMap(keyClass);
         }
 
+        // 普通的对象使用ObjectFactory来构造，默认使用JVM的反射方式
         return objectFactory.buildBean(clazz, context);
     }
 }

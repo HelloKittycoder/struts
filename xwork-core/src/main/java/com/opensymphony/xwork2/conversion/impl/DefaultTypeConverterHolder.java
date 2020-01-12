@@ -18,6 +18,7 @@ public class DefaultTypeConverterHolder implements TypeConverterHolder {
      * - String - classname as String
      * - TypeConverter - instance of TypeConverter
      * </pre>
+     * 系统级别的映射缓存表
      */
     private HashMap<String, TypeConverter> defaultMappings = new HashMap<String, TypeConverter>();  // non-action (eg. returned value)
 
@@ -39,11 +40,13 @@ public class DefaultTypeConverterHolder implements TypeConverterHolder {
      *                eg. value part of
      *                    Element_property=foo.bar.MyObject
      * </pre>
+     * Java类内部的属性映射缓存表
      */
     private HashMap<Class, Map<String, Object>> mappings = new HashMap<Class, Map<String, Object>>(); // action
 
     /**
      * Unavailable target class conversion mappings, serves as a simple cache.
+     * 无法找到类型转化处理类的那些Java类的缓存集合
      */
     private HashSet<Class> noMapping = new HashSet<Class>(); // action
 
@@ -52,6 +55,7 @@ public class DefaultTypeConverterHolder implements TypeConverterHolder {
      * <pre>
      * - String -> classname as String
      * </pre>
+     * 未知类型转化处理类的Java类的缓存集合
      */
     protected HashSet<String> unknownMappings = new HashSet<String>();     // non-action (eg. returned value)
 

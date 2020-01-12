@@ -69,9 +69,11 @@ public class XWorkBasicConverter extends DefaultTypeConverter {
 
         if (value == null || toType.isAssignableFrom(value.getClass())) {
             // no need to convert at all, right?
+            // 无需进行类型转化
             return value;
         }
 
+        // 根据不同的类型调用不同的类型转化函数
         if (toType == String.class) {
             /* the code below has been disabled as it causes sideffects in Struts2 (XW-512)
             // if input (value) is a number then use special conversion method (XW-490)

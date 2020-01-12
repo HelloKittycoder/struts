@@ -64,6 +64,7 @@ public abstract class DefaultTypeConverter implements TypeConverter {
     private Container container;
 
     static {
+        // 注册默认支持的基本类型
         Map<Class, Object> map = new HashMap<Class, Object>();
         map.put(Boolean.TYPE, Boolean.FALSE);
         map.put(Byte.TYPE, Byte.valueOf((byte) 0));
@@ -91,7 +92,10 @@ public abstract class DefaultTypeConverter implements TypeConverter {
             String propertyName, Object value, Class toType) {
         return convertValue(context, value, toType);
     }
-    
+
+    /**
+     * 根据context获取对应的TypeConverter
+     */
     public TypeConverter getTypeConverter( Map<String, Object> context )
     {
         Object obj = context.get(TypeConverter.TYPE_CONVERTER_CONTEXT_KEY);
@@ -106,6 +110,7 @@ public abstract class DefaultTypeConverter implements TypeConverter {
     }
 
     /**
+     * 根据Class类型，返回类型转换后的值
      * Returns the value converted numerically to the given class type
      * 
      * This method also detects when arrays are being converted and converts the
@@ -123,6 +128,7 @@ public abstract class DefaultTypeConverter implements TypeConverter {
 
         if (value != null) {
             /* If array -> array then convert components of array individually */
+            // 如果是数组，依次对数组中的每个元素进行类型转化
             if (value.getClass().isArray() && toType.isArray()) {
                 Class componentType = toType.getComponentType();
 
@@ -133,6 +139,7 @@ public abstract class DefaultTypeConverter implements TypeConverter {
                             componentType));
                 }
             } else {
+                // 依次判断当前传入的toType类型是否为及基本类型，并调用相应的转化函数
                 if ((toType == Integer.class) || (toType == Integer.TYPE))
                     result = Integer.valueOf((int) longValue(value));
                 if ((toType == Double.class) || (toType == Double.TYPE))
@@ -160,6 +167,7 @@ public abstract class DefaultTypeConverter implements TypeConverter {
             }
         } else {
             if (toType.isPrimitive()) {
+                // 如果是基本类型，直接从定义好的map中获取结果
                 result = primitiveDefaults.get(toType);
             }
         }
@@ -189,7 +197,8 @@ public abstract class DefaultTypeConverter implements TypeConverter {
             return ((Number) value).doubleValue() != 0;
         return true; // non-null
     }
-    
+
+    // 对enum类型进行转化
     public Enum<?> enumValue(Class toClass, Object o) {
         Enum<?> result = null;
         if (o == null) {
