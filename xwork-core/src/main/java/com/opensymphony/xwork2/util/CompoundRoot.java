@@ -38,10 +38,12 @@ public class CompoundRoot extends CopyOnWriteArrayList<Object> {
     }
 
 
+    // 分割Substack的操作源头
     public CompoundRoot cutStack(int index) {
         return new CompoundRoot(subList(index, size()));
     }
 
+    // 返回栈顶元素
     public Object peek() {
         return get(0);
     }

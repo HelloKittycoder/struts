@@ -61,6 +61,7 @@ public interface ValueStack {
 
     /**
      * Get the CompoundRoot which holds the objects pushed onto the stack
+     * 获取CompoundRoot，这是一个包含了所有栈内元素的容器结构
      *
      * @return the root
      */
@@ -68,6 +69,7 @@ public interface ValueStack {
 
     /**
      * Attempts to set a property on a bean in the stack with the given expression using the default search order.
+     * 根据传入的字符串表达式和对象进行写值计算
      *
      * @param expr  the expression defining the path to the property to be set.
      * @param value the value to be set into the named property
@@ -97,8 +99,10 @@ public interface ValueStack {
 
     /**
      * Find a value by evaluating the given expression against the stack in the default search order.
+     * 根据传入的字符串表达式进行求值计算
      *
      * @param expr the expression giving the path of properties to navigate to find the property value to return
+     *             传入进行计算的字符串表达式
      * @return the result of evaluating the expression
      */
     public abstract Object findValue(String expr);
@@ -117,24 +121,27 @@ public interface ValueStack {
 
     /**
      * Get the object on the top of the stack <b>without</b> changing the stack.
+     * 获取栈顶元素，并不改变栈本身
      *
-     * @return the object on the top.
+     * @return the object on the top. 栈顶元素
      * @see CompoundRoot#peek()
      */
     public abstract Object peek();
 
     /**
      * Get the object on the top of the stack and <b>remove</b> it from the stack.
+     * 获取栈顶元素，并将其从栈中删除
      *
-     * @return the object on the top of the stack
+     * @return the object on the top of the stack 栈顶元素
      * @see CompoundRoot#pop()
      */
     public abstract Object pop();
 
     /**
      * Put this object onto the top of the stack
+     * 将对象压入栈，置于栈顶
      *
-     * @param o the object to be pushed onto the stack
+     * @param o the object to be pushed onto the stack 栈顶元素
      * @see CompoundRoot#push(Object)
      */
     public abstract void push(Object o);
@@ -150,8 +157,9 @@ public interface ValueStack {
 
     /**
      * Get the number of objects in the stack
+     * 获取栈的大小
      *
-     * @return the number of objects in the stack
+     * @return the number of objects in the stack 返回栈的大小
      */
     public abstract int size();
 

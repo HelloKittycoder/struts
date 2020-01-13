@@ -66,14 +66,19 @@ public class OgnlValueStackFactory implements ValueStackFactory {
     }
 
     public ValueStack createValueStack(ValueStack stack) {
+        // 初始化OgnlValueStack，设定OGNL计算时需要的参数等
         ValueStack result = new OgnlValueStack(stack, xworkConverter, compoundRootAccessor, allowStaticMethodAccess);
         container.inject(result);
+        // 对OgnlValueStack进行参数注入
         stack.getContext().put(ActionContext.CONTAINER, container);
         return result;
     }
-    
+
+    // 初始化Container，同时初始化OGNL的相关设置
+    // 这里主要是初始化OgnlRuntime中的三大规则
     @Inject
     public void setContainer(Container container) throws ClassNotFoundException {
+        // 从XWork的container中获取所有ognl.PropertyAccessor的实现类
         Set<String> names = container.getInstanceNames(PropertyAccessor.class);
         for (String name : names) {
             Class cls = Class.forName(name);
@@ -81,31 +86,38 @@ public class OgnlValueStackFactory implements ValueStackFactory {
                 if (Map.class.isAssignableFrom(cls)) {
                     PropertyAccessor acc = container.getInstance(PropertyAccessor.class, name);
                 }
+                // 根据不同的类名，为OGNL分配对应的PropertyAccessor实现
                 OgnlRuntime.setPropertyAccessor(cls, container.getInstance(PropertyAccessor.class, name));
+                // 找到CompoundRootAccessor的实现，并初始化
                 if (compoundRootAccessor == null && CompoundRoot.class.isAssignableFrom(cls)) {
                     compoundRootAccessor = (CompoundRootAccessor) container.getInstance(PropertyAccessor.class, name);
                 }
             }
         }
 
+        // 从XWork的container中获取所有MethodAccessor的实现类
         names = container.getInstanceNames(MethodAccessor.class);
         for (String name : names) {
             Class cls = Class.forName(name);
             if (cls != null) {
+                // 根据不同的类名，为OGNL分配对应的MethodAccessor实现
                 OgnlRuntime.setMethodAccessor(cls, container.getInstance(MethodAccessor.class, name));
             }
         }
 
+        // 从XWork的container中获取所有ognl.NullHandler的实现类
         names = container.getInstanceNames(NullHandler.class);
         for (String name : names) {
             Class cls = Class.forName(name);
             if (cls != null) {
+                // 根据不同的类名，为OGNL分配对应的NullHandler实现
                 OgnlRuntime.setNullHandler(cls, new OgnlNullHandlerWrapper(container.getInstance(NullHandler.class, name)));
             }
         }
         if (compoundRootAccessor == null) {
             throw new IllegalStateException("Couldn't find the compound root accessor");
         }
+        // 初始化container
         this.container = container;
     }
 }

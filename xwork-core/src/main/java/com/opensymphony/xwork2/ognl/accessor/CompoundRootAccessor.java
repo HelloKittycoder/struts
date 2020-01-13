@@ -67,21 +67,27 @@ public class CompoundRootAccessor implements PropertyAccessor, MethodAccessor, C
         devMode = "true".equals(mode);
     }
 
+    // 实现OGNL的PropertyAccessor中的setProperty方法
     public void setProperty(Map context, Object target, Object name, Object value) throws OgnlException {
+        // 类型转化，得到OGNL的根对象和上下文
         CompoundRoot root = (CompoundRoot) target;
         OgnlContext ognlContext = (OgnlContext) context;
 
+        // 循环查找CompoundRoot堆栈中的所有元素
         for (Object o : root) {
             if (o == null) {
                 continue;
             }
 
             try {
+                // 调用OgnlRuntime的方法判定当前元素是否能够被写值
                 if (OgnlRuntime.hasSetProperty(ognlContext, o, name)) {
                     OgnlRuntime.setProperty(ognlContext, o, name, value);
 
+                    // 设值完成，停止查找下一个元素，直接返回
                     return;
                 } else if (o instanceof Map) {
+                    // 如果是一个Map对象，直接往Map对象中写值即可
                     @SuppressWarnings("unchecked")
                     Map<Object, Object> map = (Map<Object, Object>) o;
                     try {
@@ -102,6 +108,7 @@ public class CompoundRootAccessor implements PropertyAccessor, MethodAccessor, C
             }
         }
 
+        // 如果在OGNL计算中发生异常，OGNL上下文中会决定是否抛出这个异常
         boolean reportError = toBoolean((Boolean) context.get(ValueStack.REPORT_ERRORS_ON_NO_PROP));
 
         if (reportError || devMode) {
@@ -115,15 +122,19 @@ public class CompoundRootAccessor implements PropertyAccessor, MethodAccessor, C
         }
     }
 
+    // 实现OGNL的PropertyAccessor中的getProperty方法
     public Object getProperty(Map context, Object target, Object name) throws OgnlException {
+        // 类型转化，得到OGNL的根对象和上下文
         CompoundRoot root = (CompoundRoot) target;
         OgnlContext ognlContext = (OgnlContext) context;
 
+        // 如果访问表达式是数字，表示获取ValueStack的一个子栈
         if (name instanceof Integer) {
             Integer index = (Integer) name;
 
             return root.cutStack(index);
         } else if (name instanceof String) {
+            // 处理关键字top，返回的是ValueStack的栈顶元素
             if ("top".equals(name)) {
                 if (root.size() > 0) {
                     return root.get(0);
@@ -132,13 +143,16 @@ public class CompoundRootAccessor implements PropertyAccessor, MethodAccessor, C
                 }
             }
 
+            // 对于普通的属性名称，需要循环整个栈，找到第一个匹配的元素并返回
             for (Object o : root) {
                 if (o == null) {
                     continue;
                 }
 
                 try {
+                    // 调用OgnlRuntime的方法判定是否包含该属性
                     if ((OgnlRuntime.hasGetProperty(ognlContext, o, name)) || ((o instanceof Map) && ((Map) o).containsKey(name))) {
+                        // 找到属性后，停止查找，并直接返回属性值作为结果
                         return OgnlRuntime.getProperty(ognlContext, o, name);
                     }
                 } catch (OgnlException e) {

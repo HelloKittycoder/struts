@@ -57,6 +57,8 @@ public class OgnlValueStack implements Serializable, ValueStack, ClearableValueS
     private static final String MAP_IDENTIFIER_KEY = "com.opensymphony.xwork2.util.OgnlValueStack.MAP_IDENTIFIER_KEY";
     private static final Logger LOG = LoggerFactory.getLogger(OgnlValueStack.class);
 
+    // 使用装饰模式，将根对象（栈结构）封装在ValueStack内部
+    // 从外界看，所有的操作就像针对单一对象的操作，实际上在内部，实现了对栈的遍历
     CompoundRoot root;
     transient Map<String, Object> context;
     Class defaultType;
@@ -69,6 +71,7 @@ public class OgnlValueStack implements Serializable, ValueStack, ClearableValueS
     private boolean logMissingProperties;
 
     protected OgnlValueStack(XWorkConverter xworkConverter, CompoundRootAccessor accessor, TextProvider prov, boolean allowStaticAccess) {
+        // 调用setRoot方法完成初始化
         setRoot(xworkConverter, accessor, new CompoundRoot(), allowStaticAccess);
         push(prov);
     }
@@ -86,12 +89,17 @@ public class OgnlValueStack implements Serializable, ValueStack, ClearableValueS
         securityMemberAccess.setDisallowProxyMemberAccess(ognlUtil.isDisallowProxyMemberAccess());
     }
 
+    // 真正的OgnlValueStack的初始化过程
     protected void setRoot(XWorkConverter xworkConverter, CompoundRootAccessor accessor, CompoundRoot compoundRoot,
                            boolean allowStaticMethodAccess) {
+        // 根对象是一个CompoundRootAccessor类型的栈结构
         this.root = compoundRoot;
+        // 设定OGNL所需的MemberAccess实现类
         this.securityMemberAccess = new SecurityMemberAccess(allowStaticMethodAccess);
+        // 创建OGNL的上下文
         this.context = Ognl.createDefaultContext(this.root, accessor, new OgnlTypeConverterWrapper(xworkConverter), securityMemberAccess);
         context.put(VALUE_STACK, this);
+        // 设置OGNL上下文的其他相关参数
         Ognl.setClassResolver(context, accessor);
         ((OgnlContext) context).setTraceEvaluations(false);
         ((OgnlContext) context).setKeepLastEvaluation(false);

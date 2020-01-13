@@ -53,6 +53,7 @@ public class ServletActionContext extends ActionContext implements StrutsStatics
 
     /**
      * Gets the current action context
+     * 根据当前的HttpServletRequest获取对应的ActionContext
      *
      * @param req The request
      * @return The current action context
@@ -68,6 +69,7 @@ public class ServletActionContext extends ActionContext implements StrutsStatics
 
     /**
      * Gets the current value stack for this request
+     * 根据当前的HttpServletRequest获取对应的ValueStack
      *
      * @param req The request
      * @return The value stack
@@ -78,6 +80,7 @@ public class ServletActionContext extends ActionContext implements StrutsStatics
 
     /**
      * Gets the action mapping for this context
+     * 获取当前的ActionMapping对象
      *
      * @return The action mapping
      */
@@ -87,6 +90,7 @@ public class ServletActionContext extends ActionContext implements StrutsStatics
 
     /**
      * Returns the HTTP page context.
+     * 获取当前请求的PageContext对象
      *
      * @return the HTTP page context.
      */
@@ -96,6 +100,7 @@ public class ServletActionContext extends ActionContext implements StrutsStatics
 
     /**
      * Sets the HTTP servlet request object.
+     * 将当前的HttpServletRequest对象存储于ActionContext中
      *
      * @param request the HTTP servlet request object.
      */
@@ -105,6 +110,7 @@ public class ServletActionContext extends ActionContext implements StrutsStatics
 
     /**
      * Gets the HTTP servlet request object.
+     * 获取存储于ActionContext中线程安全的HttpServletRequest对象
      *
      * @return the HTTP servlet request object.
      */
@@ -114,6 +120,7 @@ public class ServletActionContext extends ActionContext implements StrutsStatics
 
     /**
      * Sets the HTTP servlet response object.
+     * 将当前的HttpServletResponse对象存储于ActionContext中
      *
      * @param response the HTTP servlet response object.
      */
@@ -123,6 +130,7 @@ public class ServletActionContext extends ActionContext implements StrutsStatics
 
     /**
      * Gets the HTTP servlet response object.
+     * 获取存储于ActionContext中线程安全的HttpServletResponse对象
      *
      * @return the HTTP servlet response object.
      */
@@ -132,6 +140,7 @@ public class ServletActionContext extends ActionContext implements StrutsStatics
 
     /**
      * Gets the servlet context.
+     * 获取存储于ActionContext中的ServletContext对象
      *
      * @return the servlet context.
      */
@@ -141,6 +150,7 @@ public class ServletActionContext extends ActionContext implements StrutsStatics
 
     /**
      * Sets the current servlet context object
+     * 将ServletContext对象存储到ActionContext中
      *
      * @param servletContext The servlet context to use
      */
