@@ -64,25 +64,34 @@ public class PrepareOperations {
 
     /**
      * Creates the action context and initializes the thread local
+     * 创建ActionContext，并初始化到当前线程
      */
     public ActionContext createActionContext(HttpServletRequest request, HttpServletResponse response) {
         ActionContext ctx;
+        // 为当前线程的ActionContext进行计数，为之后cleanup做准备
         Integer counter = 1;
         Integer oldCounter = (Integer) request.getAttribute(CLEANUP_RECURSION_COUNTER);
         if (oldCounter != null) {
             counter = oldCounter + 1;
         }
-        
+
+        // 获取当前线程中的ActionContext
         ActionContext oldContext = ActionContext.getContext();
         if (oldContext != null) {
             // detected existing context, so we are probably in a forward
+            // 当前线程中存在ActionContext，复制为新的ActionContext
             ctx = new ActionContext(new HashMap<String, Object>(oldContext.getContextMap()));
         } else {
+            // 创建ValueStack
             ValueStack stack = dispatcher.getContainer().getInstance(ValueStackFactory.class).createValueStack();
+            // 设置ValueStack的数据环境，注意这里的数据环境通过dispatcher的转换，
+            // 实际上已经成为普通的Java对象，这就消除了ValueStack对容器的依赖
             stack.getContext().putAll(dispatcher.createContextMap(request, response, null));
+            // 将ValueStack的数据环境与ActionContext等同起来
             ctx = new ActionContext(stack.getContext());
         }
         request.setAttribute(CLEANUP_RECURSION_COUNTER, counter);
+        // 设置ActionContext到当前线程
         ActionContext.setContext(ctx);
         return ctx;
     }

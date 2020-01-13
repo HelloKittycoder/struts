@@ -93,6 +93,7 @@ public class StrutsPrepareAndExecuteFilterIntegrationTest extends TestCase {
             }
         };
 
+        // 顺带说一句，这里为什么能访问到hello.action，因为resources目录下struts.xml已经配置过了
         request.setRequestURI("/hello.action");
         StrutsPrepareAndExecuteFilter filter = new StrutsPrepareAndExecuteFilter();
         filter.init(filterConfig);
